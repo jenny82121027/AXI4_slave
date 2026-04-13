@@ -1,0 +1,24 @@
+digraph top_slave_only_fsm {
+    graph [rankdir=LR, splines=true, nodesep=0.7, ranksep=1.0, bgcolor="white"];
+    node [shape=ellipse, style="filled", fillcolor="#eef0ff", color="#444444", fontname="Helvetica"];
+    edge [color="#444444", fontname="Helvetica"];
+
+    reset [shape=point, width=0.15, label=""];
+    S_IDLE [fillcolor="#eaf7ea"];
+    S_WRITE_REQ;
+    S_WRITE_RESP;
+    S_READ_REQ;
+    S_READ_RESP;
+
+    reset -> S_IDLE [label="reset"];
+
+    S_IDLE -> S_WRITE_REQ [label="btn_step_rise && current_is_write"];
+    S_IDLE -> S_READ_REQ [label="btn_step_rise && !current_is_write"];
+
+    S_WRITE_REQ -> S_WRITE_REQ [label="wait for both AW and W\naw_done / w_done track partial progress", color="#888888"];
+    S_WRITE_REQ -> S_WRITE_RESP [label="next_aw_done && next_w_done"];
+    S_WRITE_RESP -> S_IDLE [label="b_hs"];
+
+    S_READ_REQ -> S_READ_RESP [label="ar_hs"];
+    S_READ_RESP -> S_IDLE [label="r_hs"];
+}

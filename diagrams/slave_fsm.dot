@@ -1,0 +1,24 @@
+digraph slave_fsm {
+    graph [rankdir=LR, splines=true, nodesep=0.7, ranksep=1.0, bgcolor="white"];
+    node [shape=ellipse, style="filled", fillcolor="#eef0ff", color="#444444", fontname="Helvetica"];
+    edge [color="#444444", fontname="Helvetica"];
+
+    reset [shape=point, width=0.15, label=""];
+    IDLE [fillcolor="#eaf7ea"];
+    WRITE_CHANNEL;
+    WRESP_CHANNEL;
+    RADDR_CHANNEL;
+    RDATA_CHANNEL;
+
+    reset -> IDLE [label="reset"];
+
+    IDLE -> WRITE_CHANNEL [label="S_AWVALID"];
+    IDLE -> RADDR_CHANNEL [label="S_ARVALID\nwhen no write request"];
+
+    WRITE_CHANNEL -> WRITE_CHANNEL [label="capture AW first\nor capture W first", color="#888888"];
+    WRITE_CHANNEL -> WRESP_CHANNEL [label="aw_complete && w_complete"];
+    WRESP_CHANNEL -> IDLE [label="S_BVALID && S_BREADY"];
+
+    RADDR_CHANNEL -> RDATA_CHANNEL [label="S_ARVALID && S_ARREADY"];
+    RDATA_CHANNEL -> IDLE [label="S_RVALID && S_RREADY"];
+}

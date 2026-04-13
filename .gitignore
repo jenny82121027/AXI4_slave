@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.DS_Store
+dump.vcd
+obj_dir/
+sim_build/
+sim_build_slave_only/
+sim_build_master_slave/
+results.xml
+results_slave_only.xml
+results_master_slave.xml
+waveform.vcd
+lib

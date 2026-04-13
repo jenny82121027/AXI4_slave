@@ -1,0 +1,34 @@
+digraph top_slave_only_datapath {
+    graph [rankdir=LR, splines=polyline, nodesep=0.55, ranksep=0.9, bgcolor="white"];
+    node [shape=box, style="rounded,filled", fillcolor="#f7f7f7", color="#444444", fontname="Helvetica"];
+    edge [color="#444444", fontname="Helvetica"];
+
+    buttons [label="Inputs\nbtn_mode\nbtn_step", fillcolor="#e8f1fb"];
+    sync [label="Button Synchronizer\n2-FF sync for each button", fillcolor="#fff6dd"];
+    edge_detect [label="Edge Detector\nbtn_mode_rise\nbtn_step_rise", fillcolor="#fff6dd"];
+    display_mode [label="Display Mode Register\n0..3", fillcolor="#eef0ff"];
+    demo_seq [label="Demo Step Selector\n0: read ID\n1: write reg0\n2: read reg0\n3: try write ID\n4: read ID again", fillcolor="#eef0ff"];
+    ctrl [label="Demo Controller FSM\nS_IDLE\nS_WRITE_REQ\nS_WRITE_RESP\nS_READ_REQ\nS_READ_RESP", fillcolor="#eef0ff"];
+    axi [label="AXI4-Lite Slave", fillcolor="#f3ebff"];
+    status [label="Result Registers\nlast_read_data\nlast_read_resp\nlast_write_resp\nlast_op_was_read\nlast_check_pass", fillcolor="#fdeaea"];
+    ledmux [label="LED Mux\nmode 0: state + step\nmode 1: read data[7:0]\nmode 2: pass/fail + resp\nmode 3: handshake activity", fillcolor="#eaf7ea"];
+    led [label="LED[7:0]", fillcolor="#eaf7ea"];
+
+    buttons -> sync;
+    sync -> edge_detect;
+    edge_detect -> display_mode [label="btn_mode_rise"];
+    edge_detect -> ctrl [label="btn_step_rise"];
+    demo_seq -> ctrl [label="current transaction"];
+    ctrl -> demo_seq [label="advance step after completed read/write"];
+
+    ctrl -> axi [label="s_araddr / s_arvalid / s_rready\ns_awaddr / s_awvalid\ns_wdata / s_wstrb / s_wvalid\ns_bready"];
+    axi -> status [label="s_rdata / s_rresp / s_bresp\nAW/W/AR/R/B handshakes"];
+    demo_seq -> status [label="expected_rdata"];
+
+    display_mode -> ledmux [label="select"];
+    ctrl -> ledmux [label="state"];
+    demo_seq -> ledmux [label="demo_step"];
+    status -> ledmux [label="last observed result"];
+    axi -> ledmux [label="handshake activity"];
+    ledmux -> led;
+}

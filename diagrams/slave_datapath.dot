@@ -1,0 +1,45 @@
+digraph slave_datapath {
+    graph [rankdir=LR, splines=polyline, nodesep=0.5, ranksep=0.8, bgcolor="white"];
+    node [shape=box, style="rounded,filled", fillcolor="#f7f7f7", color="#444444", fontname="Helvetica"];
+    edge [color="#444444", fontname="Helvetica"];
+
+    ar [label="Read Address Channel\nS_ARADDR / S_ARVALID / S_ARREADY", fillcolor="#e8f1fb"];
+    aw [label="Write Address Channel\nS_AWADDR / S_AWVALID / S_AWREADY", fillcolor="#e8f1fb"];
+    w  [label="Write Data Channel\nS_WDATA / S_WSTRB / S_WVALID / S_WREADY", fillcolor="#e8f1fb"];
+    r  [label="Read Response Channel\nS_RDATA / S_RRESP / S_RVALID / S_RREADY", fillcolor="#eaf7ea"];
+    b  [label="Write Response Channel\nS_BRESP / S_BVALID / S_BREADY", fillcolor="#eaf7ea"];
+
+    addr_latch [label="Read Address Latch\naddr", fillcolor="#fff6dd"];
+    write_buf [label="Write Buffers\nawaddr_latched\nwdata_latched\nwstrb_latched\naw_captured / w_captured", fillcolor="#fff6dd"];
+    merge [label="apply_wstrb()\nbyte-enable merge logic", fillcolor="#fdeaea"];
+    regbank [label="Register Bank\n32 x 32-bit registers", fillcolor="#f3ebff"];
+    idreg [label="Read-only ID Register\naddr = 1\nvalue = 0x00018644", fillcolor="#fcefd8"];
+    fsm [label="Slave Control FSM\nIDLE\nWRITE_CHANNEL\nWRESP_CHANNEL\nRADDR_CHANNEL\nRDATA_CHANNEL", fillcolor="#eef0ff"];
+    guard [label="Write Guard\nblock writes to ID register", fillcolor="#fdeaea"];
+
+    ar -> fsm [label="read request"];
+    fsm -> ar [label="drive ARREADY"];
+    ar -> addr_latch [label="AR handshake"];
+    addr_latch -> regbank [label="read index"];
+    regbank -> r [label="selected register data"];
+    fsm -> r [label="drive RVALID / RRESP"];
+
+    aw -> fsm [label="AW handshake"];
+    w -> fsm [label="W handshake"];
+    fsm -> aw [label="drive AWREADY"];
+    fsm -> w [label="drive WREADY"];
+    aw -> write_buf [label="capture address if W pending"];
+    w -> write_buf [label="capture data/strobe if AW pending"];
+    aw -> guard [label="pending_write_addr"];
+    write_buf -> guard [label="latched addr/data/strobe"];
+    guard -> merge [label="allow only writable regs"];
+    regbank -> merge [label="current value"];
+    merge -> regbank [label="updated value"];
+    idreg -> regbank [label="register[1] fixed after reset", style=dashed];
+
+    fsm -> b [label="drive BVALID / BRESP"];
+
+    fsm -> addr_latch [style=dashed, label="latch enable"];
+    fsm -> write_buf [style=dashed, label="capture / clear control"];
+    fsm -> merge [style=dashed, label="write when AW+W complete"];
+}

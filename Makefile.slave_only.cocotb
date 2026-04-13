@@ -1,0 +1,25 @@
+# Makefile for cocotb + Verilator simulation of AXI4-Lite slave-only top
+
+TOPLEVEL_LANG = verilog
+
+VERILOG_SOURCES = \
+    $(PWD)/axi4_lite_slave.sv
+
+TOPLEVEL = axi4_lite_slave
+COCOTB_TEST_MODULES = test_axi4_lite_slave_only_cocotb
+SIM_BUILD = sim_build_slave_only
+COCOTB_RESULTS_FILE = results_slave_only.xml
+
+OSS_CAD_BINDIR := $(dir $(shell which verilator))
+OSS_CAD_LIBDIR := $(abspath $(OSS_CAD_BINDIR)/../lib)
+
+EXTRA_ARGS = --trace --trace-structs --timing --assert
+
+export COCOTB_RESOLVE_X = zeros
+export COCOTB_REDUCED_LOG_FMT = 1
+export DYLD_LIBRARY_PATH := $(OSS_CAD_LIBDIR):$(DYLD_LIBRARY_PATH)
+export LD_LIBRARY_PATH := $(OSS_CAD_LIBDIR):$(LD_LIBRARY_PATH)
+
+SIM = verilator
+
+include $(shell cocotb-config --makefiles)/Makefile.sim
