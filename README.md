@@ -4,9 +4,10 @@ This repository contains an AXI4-Lite slave design with Verilator/Cocotb simulat
 
 ## What is included
 
-- `axi4_lite_slave.sv` - AXI4-Lite slave RTL
+- `src/tt_um_jenny82121027_axi4lite.sv` - Tiny Tapeout top module
+- `src/axi4_lite_slave.sv` - AXI4-Lite slave RTL
 - `axi4_lite_top_slave_only.sv` - Slave-only top with button-driven demo control
-- `test_axi4_lite_slave_only_cocotb.py` - Cocotb testbench for the slave-only design
+- `test/` - Cocotb testbench for Tiny Tapeout-style simulation
 - `diagrams/` - FSM and datapath diagrams
 - `fpga_axi4_lite_slave/` - FPGA flow for the slave RTL
 - `fpga_axi4_lite_top_slave_only/` - FPGA flow for the demo top
@@ -23,23 +24,19 @@ The AXI4-Lite slave implements:
 - A read-only ID register at address `1`
 - Verilator assertions for handshake and reset behavior
 
-The top-level demo adds:
+The Tiny Tapeout top adds:
 
 - LED status display
 - Button synchronizers
 - Step/mode control for interactive testing
+- Readback over the bidirectional pins with proper `uio_oe` control
 
 ## Simulation
 
-Run the slave-only cocotb test from this repo root:
+Run the Tiny Tapeout cocotb test:
 
 ```sh
-make -f Makefile.slave_only.cocotb
-```
-
-Run the combined top/slave simulation from the parent Verilator project if needed:
-
-```sh
+cd test
 make
 ```
 
@@ -49,7 +46,7 @@ make
 make lint
 ```
 
-This runs Verilator lint on `axi4_lite_slave.sv`.
+This runs Verilator lint on `src/axi4_lite_slave.sv`.
 
 ## FPGA Flow
 
@@ -84,6 +81,8 @@ make -C asic_axi4_lite_top_slave_only run
 
 The ASIC flows expect the LibreLane / IIC-OSIC environment to be available in your shell.
 
+The current submission version has already passed GDS.
+
 ## Diagrams
 
 Rendered diagram files are stored in `diagrams/`. They can be regenerated with Graphviz:
@@ -91,4 +90,3 @@ Rendered diagram files are stored in `diagrams/`. They can be regenerated with G
 ```sh
 dot -Tsvg diagrams/<name>.dot -o diagrams/<name>.svg
 ```
-

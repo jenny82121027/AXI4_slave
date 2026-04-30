@@ -1,9 +1,9 @@
 # Tiny Tapeout project information
 project:
-  title:        "AXI4-Lite Slave"
+  title:        "AXI4-Lite Slave Register Demo"
   author:       "jenny82121027"
   discord:      ""
-  description:  "Simplified AXI4-Lite slave with 12 ports and 8 registers. Includes a read-only hardware ID register returning 0x00018644."
+  description:  "Tiny Tapeout AXI4-Lite slave wrapper with a read-only ID register, 32 registers, and a 16-bit readback path on the bidirectional pins."
   language:     "SystemVerilog"
   clock_hz:     50000000
 
@@ -11,12 +11,12 @@ project:
   tiles: "1x2"
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
-  top_module:  "tt_um_example"
+  top_module:  "tt_um_jenny82121027_axi4lite"
 
   # List your project's source files here.
   source_files:
-    - "project.sv"
-    - "axi4_lite_slave.sv"
+    - "src/tt_um_jenny82121027_axi4lite.sv"
+    - "src/axi4_lite_slave.sv"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
@@ -24,11 +24,11 @@ pinout:
   ui[0]: "reg_addr[0]"
   ui[1]: "reg_addr[1]"
   ui[2]: "reg_addr[2]"
-  ui[3]: "write_req"
-  ui[4]: "read_req"
-  ui[5]: "S_BREADY"
-  ui[6]: ""
-  ui[7]: ""
+  ui[3]: "reg_addr[3]"
+  ui[4]: "reg_addr[4]"
+  ui[5]: "write_req"
+  ui[6]: "read_req"
+  ui[7]: "S_BREADY"
 
   # Outputs
   uo[0]: "rdata[0]"
@@ -40,7 +40,7 @@ pinout:
   uo[6]: "rdata[6]"
   uo[7]: "rdata[7]"
 
-  # Bidirectional pins (configured as outputs for read, inputs for write data)
+  # Bidirectional pins
   uio[0]: "wdata[0] / rdata[8]"
   uio[1]: "wdata[1] / rdata[9]"
   uio[2]: "wdata[2] / rdata[10]"
