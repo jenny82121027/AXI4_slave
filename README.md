@@ -83,6 +83,8 @@ The ASIC flows expect the LibreLane / IIC-OSIC environment to be available in yo
 
 The current submission version has already passed GDS.
 
+Keep `info.yaml` aligned with `src/tt_um_jenny82121027_axi4lite.sv`; the Tiny Tapeout flow uses that file list during GDS generation.
+
 ## Diagrams
 
 Rendered diagram files are stored in `diagrams/`. They can be regenerated with Graphviz:
