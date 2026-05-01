@@ -14,6 +14,5 @@ MODULE = test
 COCOTB_RESULTS_FILE = results.xml
 
 export COCOTB_REDUCED_LOG_FMT = 1
-export COCOTB_RESOLVE_X = zeros
 
 include $(shell cocotb-config --makefiles)/Makefile.sim
