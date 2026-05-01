@@ -79,7 +79,7 @@ async def read_reg(dut, addr):
 
 @cocotb.test()
 async def test_basic_read_write_and_read_only_id(dut):
-    cocotb.start_soon(Clock(dut.ACLK, 10, unit="ns").start())
+    cocotb.start_soon(Clock(dut.ACLK, 10, units="ns").start())
     await reset_dut(dut)
 
     assert int(dut.dut.register[ID_REG_ADDR].value) == ID_REG_VALUE
@@ -100,7 +100,7 @@ async def test_basic_read_write_and_read_only_id(dut):
 
 @cocotb.test()
 async def test_split_write_channels_and_partial_write(dut):
-    cocotb.start_soon(Clock(dut.ACLK, 10, unit="ns").start())
+    cocotb.start_soon(Clock(dut.ACLK, 10, units="ns").start())
     await reset_dut(dut)
 
     await write_reg(dut, 2, 0x11223344)
